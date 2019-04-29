@@ -55,6 +55,8 @@ const tabTestHelper = function(assert, player) {
       shiftKey: shift,
       preventDefault() {
         prevented = true;
+      },
+      stopPropagation() {
       }
     });
 
@@ -208,12 +210,12 @@ QUnit.test('pressing ESC triggers close(), but only when the modal is opened', f
   const spy = sinon.spy();
 
   this.modal.on('modalclose', spy);
-  this.modal.handleKeyDown({which: ESC});
+  this.modal.handleKeyDown({which: ESC, stopPropagation() {}});
   assert.expect(2);
   assert.strictEqual(spy.callCount, 0, 'ESC did not close the closed modal');
 
   this.modal.open();
-  this.modal.handleKeyDown({which: ESC});
+  this.modal.handleKeyDown({which: ESC, stopPropagation() {}});
   assert.strictEqual(spy.callCount, 1, 'ESC closed the now-opened modal');
 });
 
@@ -392,7 +394,7 @@ QUnit.test('closeable()', function(assert) {
   assert.notOk(this.modal.getChild('closeButton'), 'the close button is no longer a child of the modal');
   assert.notOk(initialCloseButton.el(), 'the initial close button was disposed');
 
-  this.modal.handleKeyDown({which: ESC});
+  this.modal.handleKeyDown({which: ESC, stopPropagation() {}});
   assert.ok(this.modal.opened(), 'the modal was not closed by the ESC key');
 
   this.modal.close();
@@ -406,7 +408,7 @@ QUnit.test('closeable()', function(assert) {
   assert.notOk(this.modal.opened(), 'the modal was closed by the new close button');
 
   this.modal.open();
-  this.modal.handleKeyDown({which: ESC});
+  this.modal.handleKeyDown({which: ESC, stopPropagation() {}});
   assert.notOk(this.modal.opened(), 'the modal was closed by the ESC key');
 });
 
@@ -494,7 +496,7 @@ QUnit.test('"uncloseable" option', function(assert) {
   assert.notOk(modal.getChild('closeButton'), 'the close button is not present');
 
   modal.open();
-  modal.handleKeyDown({which: ESC});
+  modal.handleKeyDown({which: ESC, stopPropagation() {}});
   assert.strictEqual(spy.callCount, 0, 'ESC did not close the modal');
   modal.dispose();
 });
