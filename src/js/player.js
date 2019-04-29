@@ -2832,6 +2832,17 @@ class Player extends Component {
       return;
     }
 
+    // Bail out if the focused element or any of its descendants are explicitly
+    // excluded from hotkeys handling.
+    let el = activeEl;
+
+    while (el) {
+      if (el.hasAttribute('data-vjs-no-hotkeys')) {
+        return;
+      }
+      el = el.parentNode;
+    }
+
     if (typeof userActions.hotkeys === 'function') {
       userActions.hotkeys.call(this, event);
     } else {
